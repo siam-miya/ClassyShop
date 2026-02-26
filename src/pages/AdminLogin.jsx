@@ -15,7 +15,7 @@ const AdminLogin = () => {
       alert("successfully logged in!");
       navigate("/admin");
     } catch (error) {
-      alert("Login failed!");
+      alert("Login failed");
     }
   };
 
