@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router"; // আপনি 'react-router' v7 বা v6 ব্যবহার করছেন ধরে নিয়েছি
+import { BrowserRouter, Routes, Route } from "react-router";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -7,10 +7,15 @@ import Cart from "./pages/Cart";
 import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
 
-// Context Providers ইমপোর্ট করুন
+// Context Providers
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
 import ProductDetails from "./pages/ProductDetails";
+import AdminPannel from "./pages/AdminPannel";
+import AdminLogin from "./pages/AdminLogin";
+
+// Protected Route ইমপোর্ট করুন
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 const App = () => {
   return (
@@ -25,6 +30,16 @@ const App = () => {
               <Route path="/cart" element={<Cart />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/adminlogin" element={<AdminLogin />} />
+              
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <AdminPannel />
+                  </ProtectedRoute>
+                } 
+              />
             </Route>
             <Route path="*" element={<ErrorPage />} />
           </Routes>
