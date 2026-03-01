@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; // এটি যোগ করা হয়েছে
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB6TF2YZ0Q-JNQMmEOM-i7eh5YswIU8ELI",
@@ -11,6 +12,13 @@ const firebaseConfig = {
   appId: "1:790693486003:web:11fb679d33b99397753fc6"
 };
 
-export const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app); // এটি এক্সপোর্ট করা হলো
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Services
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+// Export everything together at the end
+export { app, db, auth, storage };

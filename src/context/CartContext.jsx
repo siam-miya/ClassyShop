@@ -5,7 +5,7 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // ১. প্রোডাক্ট অ্যাড করা বা কোয়ান্টিটি বাড়ানো
+  // ১. প্রোডাক্ট অ্যাড করা বা কোয়ান্টিটি বাড়ানো
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const isExist = prevItems.find((item) => item.id === product.id);
@@ -14,11 +14,16 @@ export const CartProvider = ({ children }) => {
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      // অ্যাড করার সময় image এবং img দুটিই নিশ্চিত করা হচ্ছে
+      return [...prevItems, { 
+        ...product, 
+        quantity: 1, 
+        img: product.image || product.img // ইমেজ হ্যান্ডলিং ফিক্স
+      }];
     });
   };
 
-  // ২. কোয়ান্টিটি আপডেট করা (+ অথবা -)
+  // ২. কোয়ান্টিটি আপডেট করা (+ অথবা -)
   const updateQuantity = (id, type) => {
     setCartItems((prevItems) =>
       prevItems.map((item) => {
@@ -33,14 +38,13 @@ export const CartProvider = ({ children }) => {
       })
     );
   };
-
-  // ৩. রিমুভ করা
   const removeFromCart = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
+  const clearCart = () => setCartItems([]);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );

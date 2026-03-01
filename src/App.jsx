@@ -14,13 +14,31 @@ import ProductDetails from "./pages/ProductDetails";
 import AdminPannel from "./pages/AdminPannel";
 import AdminLogin from "./pages/AdminLogin";
 
-// Protected Route ইমপোর্ট করুন
+// Protected Route ইমপোর্ট
 import ProtectedRoute from "./components/ProtectedRoute"; 
+
+// React Hot Toast ইমপোর্ট
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <UserProvider>
       <CartProvider>
+        {/* Toaster যোগ করা হয়েছে যা পুরো অ্যাপের সব পেজে মেসেজ শো করবে */}
+        <Toaster 
+          position="top-center" 
+          reverseOrder={false} 
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#333',
+              color: '#fff',
+              borderRadius: '15px',
+              padding: '16px',
+            },
+          }}
+        />
+        
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainLayout />}>

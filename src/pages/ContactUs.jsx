@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { db } from "../firebase/firebase.config"; 
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+// React Hot Toast ইমপোর্ট করুন
+import toast from 'react-hot-toast';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -10,23 +15,49 @@ const ContactUs = () => {
     subject: '',
     message: ''
   });
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
-    alert('Thank you! Your message has been sent successfully.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    
+    // লোডিং টোস্ট শুরু
+    const loadingToast = toast.loading('Sending your message...');
+    setIsSending(true);
+
+    try {
+      // Firebase-এ ডাটা সেভ করা হচ্ছে
+      await addDoc(collection(db, "messages"), {
+        ...formData,
+        createdAt: serverTimestamp(),
+        status: 'unread'
+      });
+
+      // সাকসেস মেসেজ (আগের লোডিং টোস্টটি রিপ্লেস করবে)
+      toast.success('Thank you! Your message has been sent successfully.', {
+        id: loadingToast,
+        duration: 4000,
+      });
+
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error("Error:", error);
+      // এরর মেসেজ
+      toast.error('Failed to send message. Please try again.', {
+        id: loadingToast,
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  // Framer Motion ভ্যারিয়েন্টগুলো আগের মতোই আছে...
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
   };
 
   const itemVariants = {
@@ -82,6 +113,7 @@ const ContactUs = () => {
               </motion.div>
             ))}
           </motion.div>
+
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -96,7 +128,7 @@ const ContactUs = () => {
                     <input 
                       required name="name" value={formData.name} onChange={handleChange} type="text" 
                       className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
-                      placeholder="Inter your name " 
+                      placeholder="Enter your name" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -128,17 +160,17 @@ const ContactUs = () => {
                 </div>
 
                 <motion.button 
+                  disabled={isSending}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit" 
-                  className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-3 shadow-xl cursor-pointer"
+                  className={`w-full py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-xl cursor-pointer ${isSending ? 'bg-gray-400 cursor-not-allowed' : 'bg-slate-900 hover:bg-blue-600 text-white'}`}
                 >
-                  <FaPaperPlane className="text-sm" /> Send Message
+                  <FaPaperPlane className="text-sm" /> {isSending ? "Sending..." : "Send Message"}
                 </motion.button>
               </form>
             </div>
           </motion.div>
-
         </div>
       </div>
     </div>
