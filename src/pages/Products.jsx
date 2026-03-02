@@ -85,7 +85,6 @@ const Products = () => {
                 whileHover={{ y: -10 }} 
                 className="group border border-slate-100 p-4 rounded-2xl shadow-sm bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
               >
-                {/* ইমেজ সেকশন - এডমিন প্যানেল থেকে আসা 'image' বা 'img' হ্যান্ডেল করবে */}
                 <div 
                   onClick={() => navigate(`/product/${shoe.id}`)} 
                   className="cursor-pointer overflow-hidden rounded-xl bg-gray-50 relative"

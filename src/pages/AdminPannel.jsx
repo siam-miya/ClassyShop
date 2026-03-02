@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, doc, deleteDoc, addDoc, onSnapshot, query, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase.config"; 
-import { FaTrashAlt, FaShoppingBag, FaLayerGroup, FaPlus, FaTimes, FaCloudUploadAlt, FaEye, FaPhoneAlt, FaMapMarkerAlt, FaChartLine, FaTruck, FaEnvelope } from "react-icons/fa";
-
-// Hot Toast ইমপোর্ট করুন
+import { FaTrashAlt, FaShoppingBag, FaLayerGroup, FaPlus, FaTimes, FaCloudUploadAlt, FaEye, FaPhoneAlt, FaMapMarkerAlt, FaChartLine, FaTruck, FaEnvelope, FaBoxes } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const AdminPannel = () => {
@@ -13,10 +11,18 @@ const AdminPannel = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false); 
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [newPost, setNewPost] = useState({ name: "", price: "", image: "", category: "", description: "" });
+  
+  // Updated state with stock field
+  const [newPost, setNewPost] = useState({ 
+    name: "", 
+    price: "", 
+    image: "", 
+    category: "", 
+    description: "",
+    stock: "" 
+  });
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
@@ -54,7 +60,6 @@ const AdminPannel = () => {
     return data.secure_url;
   };
 
-  // --- আপডেট করা প্রোডাক্ট অ্যাড ফাংশন ---
   const handleAddPost = async (e) => {
     e.preventDefault();
     if (!imageFile) return toast.error("Please select an image!");
@@ -67,13 +72,14 @@ const AdminPannel = () => {
       await addDoc(collection(db, "products"), { 
         ...newPost, 
         price: parseFloat(newPost.price), 
+        stock: parseInt(newPost.stock) || 0, 
         image: imageUrl, 
         createdAt: new Date() 
       });
 
       toast.success("Product published successfully!", { id: loadingToast });
       setIsModalOpen(false);
-      setNewPost({ name: "", price: "", image: "", category: "", description: "" });
+      setNewPost({ name: "", price: "", image: "", category: "", description: "", stock: "" });
       setImageFile(null);
     } catch (error) { 
       toast.error(error.message, { id: loadingToast }); 
@@ -82,14 +88,13 @@ const AdminPannel = () => {
     }
   };
 
-  // --- আপডেট করা ডিলিট ফাংশন (কাস্টম টোস্ট কনফার্মেশন সহ) ---
   const handleDelete = async (coll, id) => {
     toast((t) => (
       <span className="flex flex-col gap-2">
         <b className="text-sm">Are you sure you want to delete?</b>
         <div className="flex gap-2 justify-end">
           <button 
-            className="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold"
+            className="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold cursor-pointer"
             onClick={async () => {
               toast.dismiss(t.id);
               try {
@@ -111,9 +116,8 @@ const AdminPannel = () => {
         </div>
       </span>
     ), { duration: 4000, position: 'top-right' });
-  };
+  }; 
 
-  // --- আপডেট করা স্ট্যাটাস আপডেট ফাংশন ---
   const updateOrderStatus = async (id, status) => {
     const loadingToast = toast.loading(`Updating status to ${status}...`);
     try {
@@ -127,12 +131,10 @@ const AdminPannel = () => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 font-sans">
-      
-      {/* --- Sidebar (আপনার আগের কোড অনুযায়ী) --- */}
       <div className="w-full md:w-72 bg-slate-900 text-white p-6 shadow-2xl flex flex-col">
         <div className="flex items-center gap-3 mb-10 px-2">
           <div className="p-2 bg-blue-600 rounded-lg"><FaShoppingBag size={20}/></div>
-          <h2 className="text-xl font-black tracking-widest uppercase italic text-blue-400">Classy Panel</h2>
+          <h2 className="text-xl font-black tracking-widest italic text-white">Classy<span className="text-blue-400">Shop</span> Admin</h2>
         </div>
         
         <nav className="space-y-2 flex-1">
@@ -146,17 +148,9 @@ const AdminPannel = () => {
             <FaEnvelope /> Customer Messages
           </button>
         </nav>
-
-        <div className="mt-auto p-4 bg-slate-800/50 rounded-3xl border border-slate-700">
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Admin Access</p>
-            <p className="font-bold text-sm">Super Admin</p>
-        </div>
       </div>
 
-      {/* --- Main Content --- */}
       <div className="flex-1 p-5 md:p-10 overflow-y-auto max-h-screen">
-        
-        {/* Header Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-5">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center"><FaShoppingBag size={24}/></div>
@@ -270,7 +264,12 @@ const AdminPannel = () => {
                   <div className="flex justify-between items-start gap-2">
                     <div>
                       <h4 className="font-black text-slate-800 line-clamp-1">{post.name}</h4>
-                      <p className="text-blue-600 font-black text-xl mt-1">৳{post.price}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-blue-600 font-black text-xl">৳{post.price}</p>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${post.stock > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                          Stock: {post.stock || 0}
+                        </span>
+                      </div>
                     </div>
                     <button onClick={() => handleDelete("products", post.id)} className="p-4 text-red-500 bg-red-50 rounded-2xl hover:bg-red-500 hover:text-white transition-all active:scale-90"><FaTrashAlt /></button>
                   </div>
@@ -284,7 +283,7 @@ const AdminPannel = () => {
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex items-center gap-4">
                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black">
-                              {msg.name.charAt(0)}
+                              {msg.name?.charAt(0)}
                            </div>
                            <div>
                               <h4 className="font-black text-slate-900">{msg.name}</h4>
@@ -309,8 +308,6 @@ const AdminPannel = () => {
           )
         )}
       </div>
-
-      {/* --- Modals --- */}
       {selectedOrder && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md flex justify-center items-center z-[100] p-4">
           <div className="bg-white w-full max-w-2xl rounded-[3rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
@@ -387,14 +384,21 @@ const AdminPannel = () => {
                 )}
                 <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => setImageFile(e.target.files[0])} />
               </div>
+              
               <div className="space-y-4">
-                <input required type="text" className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="What's the product name?" onChange={(e) => setNewPost({...newPost, name: e.target.value})} />
+                <input required type="text" value={newPost.name} className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="What's the product name?" onChange={(e) => setNewPost({...newPost, name: e.target.value})} />
+                
                 <div className="grid grid-cols-2 gap-4">
-                  <input required type="number" className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="Price (৳)" onChange={(e) => setNewPost({...newPost, price: e.target.value})} />
-                  <input type="text" className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="Category" onChange={(e) => setNewPost({...newPost, category: e.target.value})} />
+                  <input required type="number" value={newPost.price} className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="Price (৳)" onChange={(e) => setNewPost({...newPost, price: e.target.value})} />
+                  {/* --- Stock Input Added Here --- */}
+                  <input required type="number" value={newPost.stock} className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="Stock Qty" onChange={(e) => setNewPost({...newPost, stock: e.target.value})} />
                 </div>
-                <textarea className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all h-24" placeholder="Brief description..." onChange={(e) => setNewPost({...newPost, description: e.target.value})}></textarea>
+
+                <input type="text" value={newPost.category} className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all" placeholder="Category" onChange={(e) => setNewPost({...newPost, category: e.target.value})} />
+                
+                <textarea value={newPost.description} className="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none font-bold transition-all h-24" placeholder="Brief description..." onChange={(e) => setNewPost({...newPost, description: e.target.value})}></textarea>
               </div>
+
               <button disabled={uploading} className={`w-full py-5 rounded-[2rem] font-black text-xl transition-all shadow-xl active:scale-95 ${uploading ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-slate-900 shadow-blue-200"}`}>
                 {uploading ? "Uploading, please wait..." : "Publish Product Now"}
               </button>
