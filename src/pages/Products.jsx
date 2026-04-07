@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react'; // useEffect, useState যোগ করা হয়েছে
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
-import { collection, getDocs } from "firebase/firestore"; // Firestore মেথড
-import { db } from "../firebase/firebase.config"; // Firebase config
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/firebase.config";
 
 const Products = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // ডাটা রাখার জন্য স্টেট
   const [shoes, setShoes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ফায়ারবেস থেকে ডাটা নিয়ে আসার ফাংশন
   const fetchProducts = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "products"));
@@ -42,11 +40,11 @@ const Products = () => {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+      transition: { duration: 0.4, ease: "easeOut" }
     },
   };
 
@@ -57,13 +55,13 @@ const Products = () => {
   );
 
   return (
-    <div className="bg-gray-50 py-16">
-      <div className="container mx-auto px-4 sm:px-6">
+    <div className="bg-gray-50 py-10 md:py-16">
+      <div className="container mx-auto px-3 sm:px-6">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-black text-center text-slate-900 mb-12 tracking-tight"
+          className="text-3xl md:text-5xl font-black text-center text-slate-900 mb-8 md:mb-12 tracking-tight"
         >
           Explore Our <span className="text-blue-600">Collection</span>
         </motion.h1>
@@ -76,47 +74,50 @@ const Products = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            // মোবাইল ডিভাইসের জন্য grid-cols-2 এবং গ্যাপ কমানো হয়েছে
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-8"
           >
             {shoes.map((shoe) => (
               <motion.div 
                 key={shoe.id} 
                 variants={cardVariants}
-                whileHover={{ y: -10 }} 
-                className="group border border-slate-100 p-4 rounded-2xl shadow-sm bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
+                whileHover={{ y: -5 }} 
+                className="group border border-slate-100 p-2 md:p-4 rounded-xl md:rounded-2xl shadow-sm bg-white hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
               >
-                <div 
-                  onClick={() => navigate(`/product/${shoe.id}`)} 
-                  className="cursor-pointer overflow-hidden rounded-xl bg-gray-50 relative"
-                >
-                  <img 
-                    src={shoe.image || shoe.img} 
-                    alt={shoe.name} 
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
-                </div>
-
-                <div className="mt-5 space-y-1">
-                  <h2 
+                <div>
+                  <div 
                     onClick={() => navigate(`/product/${shoe.id}`)} 
-                    className="font-bold text-xl cursor-pointer hover:text-blue-600 transition-colors line-clamp-1"
+                    className="cursor-pointer overflow-hidden rounded-lg md:rounded-xl bg-gray-50 relative aspect-square"
                   >
-                    {shoe.name}
-                  </h2>
-                  <div className="flex justify-between items-center">
-                    <p className="text-blue-600 font-black text-2xl">${shoe.price}</p>
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                      {shoe.category || "Premium"}
-                    </span>
+                    <img 
+                      src={shoe.image || shoe.img} 
+                      alt={shoe.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
+                  </div>
+
+                  <div className="mt-3 md:mt-5 space-y-1">
+                    <h2 
+                      onClick={() => navigate(`/product/${shoe.id}`)} 
+                      className="font-bold text-sm md:text-xl cursor-pointer hover:text-blue-600 transition-colors line-clamp-1"
+                    >
+                      {shoe.name}
+                    </h2>
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                      <p className="text-blue-600 font-black text-base md:text-2xl">৳{shoe.price}</p>
+                      <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest truncate">
+                        {shoe.category || "Premium"}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-col gap-3">
+                <div className="mt-4 flex flex-col gap-2">
                   <motion.button 
                     whileTap={{ scale: 0.95 }}
                     onClick={() => addToCart(shoe)}
-                    className="w-full cursor-pointer bg-slate-900 text-white py-3 font-bold hover:bg-blue-600 transition-all duration-300 shadow-lg rounded-bl-2xl rounded-tr-2xl flex items-center justify-center gap-2"
+                    className="w-full cursor-pointer bg-slate-900 text-white py-2 md:py-3 text-xs md:text-sm font-bold hover:bg-blue-600 transition-all duration-300 rounded-lg md:rounded-bl-2xl md:rounded-tr-2xl flex items-center justify-center gap-1 md:gap-2"
                   >
                     Add to Cart
                   </motion.button>
@@ -127,7 +128,7 @@ const Products = () => {
                       addToCart(shoe); 
                       navigate('/checkout'); 
                     }}
-                    className="w-full cursor-pointer border-2 border-slate-900 text-slate-900 py-3 font-bold hover:bg-slate-900 hover:text-white transition-all duration-300 rounded-tl-2xl rounded-br-2xl"
+                    className="w-full cursor-pointer border border-slate-900 text-slate-900 py-2 md:py-3 text-xs md:text-sm font-bold hover:bg-slate-900 hover:text-white transition-all duration-300 rounded-lg md:rounded-tl-2xl md:rounded-br-2xl"
                   >
                     Order Now
                   </motion.button>

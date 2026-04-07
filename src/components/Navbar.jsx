@@ -23,7 +23,7 @@ const Navbar = () => {
               <img 
                 src="main-logo.png" 
                 alt="ClassyShop" 
-                className="h-12 w-auto object-contain transition-transform group-hover:scale-105 rounded-full" 
+                className="h-12 w-auto object-contain transition-transform group-hover:scale-105 rounded-[5px]" 
               />
               <span className="hidden sm:block text-2xl font-black tracking-tighter text-white">
                 Classy<span className="text-blue-400">Shop</span>

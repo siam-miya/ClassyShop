@@ -1,39 +1,31 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; 
+import slider_1 from "../assets/slider-1.jpg"
+import slider_2 from "../assets/slider_2.jpg"
+import slider_3 from "../assets/slider-3.jpg"
 const Banner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
     {
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1400&auto=format&fit=crop",
+      image: slider_1,
       title: "Step Up Your Style",
-      subtitle: "Premium quality footwear at your fingertips. Discover our latest collection.",
+      subtitle: "Upgrade your daily living with our premium gadgets.Experience ultimate comfort and modern sophistication in every step.",
       tag: "New Arrival 2026"
     },
     {
-      image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1400&auto=format&fit=crop",
+      image: slider_2,
       title: "Walk with Confidence",
       subtitle: "Experience ultimate comfort with our ergonomic designs and materials.",
       tag: "Limited Edition"
     },
     {
-      image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1400&auto=format&fit=crop",
-      title: "Urban Street Wear",
+      image: slider_3,
+      title: "Super Fan",
       subtitle: "Bold designs for the modern generation. Grab your pair today.",
       tag: "Street Style"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=1400&auto=format&fit=crop",
-      title: "Elite Performance",
-      subtitle: "Designed for athletes who never stop. Built for durability and speed.",
-      tag: "Sports Collection"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=1400&auto=format&fit=crop",
-      title: "Classic Elegance",
-      subtitle: "Timeless designs for formal and casual occasions alike.",
-      tag: "Timeless Classics"
     }
+    
   ];
 
   const nextSlide = () => {
@@ -76,7 +68,7 @@ const Banner = () => {
                   </span>
                 </h1>
                 
-                <p className="text-gray-700 text-lg mb-8 max-w-lg leading-relaxed font-semibold">
+                <p className="text-black text-lg mb-8 max-w-lg leading-relaxed font-semibold">
                   {slide.subtitle}
                 </p>
                 

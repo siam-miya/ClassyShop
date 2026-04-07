@@ -63,14 +63,13 @@ const ProductDetails = () => {
     };
     
     addToCart(productToAdd);
-    return true; // Success indicate korar jonno
+    return true; 
   };
 
-  // --- Order Now Function ---
   const handleOrderNow = () => {
     const success = handleAddToCart();
     if (success) {
-      navigate('/checkout'); // Cart-e add hoye sorasori checkout page-e niye jabe
+      navigate('/checkout');
     }
   };
 
@@ -82,7 +81,7 @@ const ProductDetails = () => {
       <div className="container mx-auto px-6 py-16 lg:py-24">
         <div className="flex flex-col lg:flex-row gap-16 items-start">
           
-          <div className="w-full lg:w-1/2  top-24">
+          <div className="w-full lg:w-1/2 sticky top-24">
             <motion.img 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -103,6 +102,8 @@ const ProductDetails = () => {
               </div>
             </div>
 
+          
+
             <div className="space-y-3">
               <h3 className="font-bold text-slate-800">Quantity:</h3>
               <div className="flex items-center gap-6 bg-white w-fit p-2 rounded-2xl shadow-sm border border-gray-100">
@@ -119,7 +120,14 @@ const ProductDetails = () => {
                 > + </button>
               </div>
             </div>
-
+            
+  {/* --- Description Section Added Here --- */}
+            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-2 uppercase text-xs tracking-widest">Description</h3>
+              <p className="text-slate-600 leading-relaxed font-medium">
+                {product.description || "No description provided for this product."}
+              </p>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button 
                 disabled={product.stock <= 0}
@@ -143,6 +151,7 @@ const ProductDetails = () => {
             <p className="text-slate-500 text-sm italic font-medium">
               * Fast delivery available all over Bangladesh.
             </p>
+            
           </div>
         </div>
       </div>
