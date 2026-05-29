@@ -19,17 +19,17 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "main-logo.png",
+            src: "icon-192.png", // PWABuilder থেকে নেওয়া ১৯২ সাইজের আইকন
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "main-logo.png",
+            src: "icon-512.png", // PWABuilder থেকে নেওয়া ৫১২ সাইজের আইকন
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "main-logo.png",
+            src: "icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
